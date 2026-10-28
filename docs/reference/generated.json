@@ -1,0 +1,804 @@
+{
+  "engine": "wapka-monolith@393f2ba",
+  "generatedAt": "2026-10-28T04:29:19.097Z",
+  "source": "wapka-subsites Lua engine",
+  "modules": {
+    "api.access": {
+      "title": "api.access",
+      "description": "Access methods, limits, fields, IP lists and auth settings.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "overview",
+          "signature": "api.access.overview()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "methods.get",
+          "signature": "api.access.methods.get()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "methods.set",
+          "signature": "api.access.methods.set(disabled, auth_required)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "limits.get",
+          "signature": "api.access.limits.get()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "limits.set",
+          "signature": "api.access.limits.set(public_per_min, user_per_min, admin_per_min)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "fields.get",
+          "signature": "api.access.fields.get()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "fields.set",
+          "signature": "api.access.fields.set(rules)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "ips.get",
+          "signature": "api.access.ips.get()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "ips.set",
+          "signature": "api.access.ips.set(allowlist, blocklist)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "auth.get",
+          "signature": "api.access.auth.get()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "auth.set",
+          "signature": "api.access.auth.set(enable_jwt, guest_user_id, guest_level)",
+          "returns": "table|nil"
+        }
+      ]
+    },
+    "api.auth": {
+      "title": "api.auth",
+      "description": "OAuth connect sessions.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "session_create",
+          "signature": "api.auth.session_create(site_id, payload)",
+          "returns": "table|nil",
+          "notes": "OAuth connect session. Payload: return_link, brand_name, providers[]."
+        },
+        {
+          "name": "session_check",
+          "signature": "api.auth.session_check(session_id)",
+          "returns": "table|nil",
+          "notes": "Reads an OAuth connect session. Returns status: pending, expired, completed or not_found."
+        }
+      ]
+    },
+    "api.codes": {
+      "title": "api.codes",
+      "description": "Page code blocks and ordering.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.codes.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "by_resource_id",
+          "signature": "api.codes.by_resource_id(resource_id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.codes.list(page_id, page?, limit?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "create",
+          "signature": "api.codes.create(page_id, data)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "update",
+          "signature": "api.codes.update(id, data)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "delete",
+          "signature": "api.codes.delete(id)",
+          "returns": "boolean|nil",
+          "notes": "Deletes one code block. Requires delete permission."
+        },
+        {
+          "name": "copy",
+          "signature": "api.codes.copy(code_id, page_id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "move",
+          "signature": "api.codes.move(code_id, page_id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "up",
+          "signature": "api.codes.up(code_id)",
+          "returns": "boolean|nil"
+        },
+        {
+          "name": "down",
+          "signature": "api.codes.down(code_id)",
+          "returns": "boolean|nil"
+        }
+      ]
+    },
+    "api.dataset": {
+      "title": "api.dataset",
+      "description": "Site-scoped JSON document store (schemaless NoSQL).",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "collections",
+          "signature": "api.dataset.collections()",
+          "returns": "string[]"
+        },
+        {
+          "name": "get",
+          "signature": "api.dataset.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "find",
+          "signature": "api.dataset.find(collection, filter?)",
+          "returns": "{ data, pagination, meta }",
+          "notes": "Returns { data, pagination, meta }. Each item is a document; the user fields are under item.data. Returns nil on API error."
+        },
+        {
+          "name": "create",
+          "signature": "api.dataset.create(collection, data)",
+          "returns": "table|nil",
+          "notes": "Requires an authenticated user (env.is_user). Returns the created document or nil."
+        },
+        {
+          "name": "update",
+          "signature": "api.dataset.update(id, data, replace?)",
+          "returns": "table|nil",
+          "notes": "Merge by default; pass replace=true for a full replace. Returns the document or nil."
+        },
+        {
+          "name": "delete",
+          "signature": "api.dataset.delete(id, permanent?)",
+          "returns": "boolean|nil",
+          "notes": "Soft delete by default; pass permanent=true for a hard delete."
+        },
+        {
+          "name": "restore",
+          "signature": "api.dataset.restore(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "purge_collection",
+          "signature": "api.dataset.purge_collection(collection)",
+          "returns": "number|nil"
+        }
+      ]
+    },
+    "api.files": {
+      "title": "api.files",
+      "description": "Files, uploads, imports and file metadata.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.files.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.files.list(filter?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "upload",
+          "signature": "api.files.upload(data)",
+          "returns": "table|nil",
+          "notes": "Uses the multipart upload field named file. Pass { folderid = n } when needed."
+        },
+        {
+          "name": "import",
+          "signature": "api.files.import(url, folder_id, options?)",
+          "returns": "table|nil",
+          "notes": "Imports from a URL. Options: name, perm, meta, overwrite, headers, validate."
+        },
+        {
+          "name": "import_key",
+          "signature": "api.files.import_key(key, folder_id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "rename",
+          "signature": "api.files.rename(id, name)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "delete",
+          "signature": "api.files.delete(id)",
+          "returns": "boolean|nil"
+        }
+      ]
+    },
+    "api.folders": {
+      "title": "api.folders",
+      "description": "File folders.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.folders.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.folders.list(parent?, sort?)",
+          "returns": "table[]"
+        },
+        {
+          "name": "create",
+          "signature": "api.folders.create(name, parent?)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "rename",
+          "signature": "api.folders.rename(id, name)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "delete",
+          "signature": "api.folders.delete(id)",
+          "returns": "boolean|nil"
+        }
+      ]
+    },
+    "api.forums": {
+      "title": "api.forums",
+      "description": "Forum categories and forum CRUD.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.forums.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.forums.list(filter?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "create",
+          "signature": "api.forums.create(name, parent?)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "rename",
+          "signature": "api.forums.rename(id, name)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "delete",
+          "signature": "api.forums.delete(id)",
+          "returns": "boolean|nil",
+          "notes": "Deletes the forum. Requires delete permission."
+        }
+      ]
+    },
+    "api.messages": {
+      "title": "api.messages",
+      "description": "Private messages, conversations and unread counts.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.messages.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "send",
+          "signature": "api.messages.send(to, message)",
+          "returns": "table|nil",
+          "notes": "Accepts a numeric user id or a username as the first argument."
+        },
+        {
+          "name": "chat",
+          "signature": "api.messages.chat(user_id, page, limit?, sort?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "conversations",
+          "signature": "api.messages.conversations()",
+          "returns": "table[]"
+        },
+        {
+          "name": "unread",
+          "signature": "api.messages.unread()",
+          "returns": "number"
+        },
+        {
+          "name": "edit",
+          "signature": "api.messages.edit(id, message)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "delete",
+          "signature": "api.messages.delete(id)",
+          "returns": "boolean|nil",
+          "notes": "Deletes one message for the current user."
+        }
+      ]
+    },
+    "api.pages": {
+      "title": "api.pages",
+      "description": "Site pages.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.pages.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.pages.list(filter?)",
+          "returns": "{ data, pagination, meta }"
+        }
+      ]
+    },
+    "api.posts": {
+      "title": "api.posts",
+      "description": "Posts inside forums.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.posts.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.posts.list(filter?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "create",
+          "signature": "api.posts.create(data)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "update",
+          "signature": "api.posts.update(id, data)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "delete",
+          "signature": "api.posts.delete(id, hard?)",
+          "returns": "boolean|nil",
+          "notes": "Soft-deletes by default; pass hard=true for a permanent delete."
+        },
+        {
+          "name": "restore",
+          "signature": "api.posts.restore(id)",
+          "returns": "table|nil"
+        }
+      ]
+    },
+    "api.sites": {
+      "title": "api.sites",
+      "description": "Site lookup and the current site.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.sites.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.sites.list(page?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "current",
+          "signature": "api.sites.current()",
+          "returns": "table|nil"
+        }
+      ]
+    },
+    "api.users": {
+      "title": "api.users",
+      "description": "User accounts, profiles, login, online visitors and stats.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "api.users.get(id)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "by_username",
+          "signature": "api.users.by_username(username)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "by_email",
+          "signature": "api.users.by_email(email)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "list",
+          "signature": "api.users.list(filter?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "create",
+          "signature": "api.users.create(data)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "update",
+          "signature": "api.users.update(id, data)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "login",
+          "signature": "api.users.login(username_or_email, password)",
+          "returns": "table|nil",
+          "notes": "Validates a username/email + password and returns the user profile, or nil. It does NOT create a session."
+        },
+        {
+          "name": "online",
+          "signature": "api.users.online(filter?)",
+          "returns": "{ data, pagination, meta }"
+        },
+        {
+          "name": "me",
+          "signature": "api.users.me()",
+          "returns": "table|nil",
+          "notes": "Returns the profile for the current platform session, or nil."
+        },
+        {
+          "name": "delete",
+          "signature": "api.users.delete(id)",
+          "returns": "table|nil",
+          "notes": "Soft-deletes by setting type=4."
+        },
+        {
+          "name": "stats",
+          "signature": "api.users.stats()",
+          "returns": "number"
+        }
+      ]
+    },
+    "api.variables": {
+      "title": "api.variables",
+      "description": "Site variables.",
+      "note": "API calls return nil on error. Check before using the result.",
+      "entries": [
+        {
+          "name": "list",
+          "signature": "api.variables.list()",
+          "returns": "table|nil"
+        },
+        {
+          "name": "set",
+          "signature": "api.variables.set(key, value)",
+          "returns": "table|nil"
+        },
+        {
+          "name": "remove",
+          "signature": "api.variables.remove(key)",
+          "returns": "boolean|nil",
+          "notes": "Removes a site variable. Requires an authenticated user."
+        }
+      ]
+    },
+    "decoder": {
+      "title": "decoder",
+      "description": "JSON, base64, base36, rot13 and hex decoding.",
+      "entries": [
+        {
+          "name": "json",
+          "signature": "decoder.json(text)",
+          "returns": "any"
+        },
+        {
+          "name": "base64",
+          "signature": "decoder.base64(text)",
+          "returns": "string"
+        },
+        {
+          "name": "base36",
+          "signature": "decoder.base36(text)",
+          "returns": "string"
+        },
+        {
+          "name": "rot13",
+          "signature": "decoder.rot13(text)",
+          "returns": "string"
+        },
+        {
+          "name": "hex",
+          "signature": "decoder.hex(text)",
+          "returns": "string"
+        }
+      ]
+    },
+    "encoder": {
+      "title": "encoder",
+      "description": "JSON, base64, base36, rot13 and hex encoding.",
+      "entries": [
+        {
+          "name": "json",
+          "signature": "encoder.json(data)",
+          "returns": "string"
+        },
+        {
+          "name": "base64",
+          "signature": "encoder.base64(data)",
+          "returns": "string"
+        },
+        {
+          "name": "base36",
+          "signature": "encoder.base36(data)",
+          "returns": "string"
+        },
+        {
+          "name": "rot13",
+          "signature": "encoder.rot13(data)",
+          "returns": "string"
+        },
+        {
+          "name": "hex",
+          "signature": "encoder.hex(data)",
+          "returns": "string"
+        }
+      ]
+    },
+    "hash": {
+      "title": "hash",
+      "description": "Hashes, HMAC, random bytes and UUIDs.",
+      "entries": [
+        {
+          "name": "md5",
+          "signature": "hash.md5(data)",
+          "returns": "string"
+        },
+        {
+          "name": "sha1",
+          "signature": "hash.sha1(data)",
+          "returns": "string"
+        },
+        {
+          "name": "sha256",
+          "signature": "hash.sha256(data)",
+          "returns": "string"
+        },
+        {
+          "name": "sha512",
+          "signature": "hash.sha512(data)",
+          "returns": "string"
+        },
+        {
+          "name": "crc32",
+          "signature": "hash.crc32(data)",
+          "returns": "number"
+        },
+        {
+          "name": "hmac",
+          "signature": "hash.hmac(key, data)",
+          "returns": "string"
+        },
+        {
+          "name": "random",
+          "signature": "hash.random(bytes?)",
+          "returns": "string"
+        },
+        {
+          "name": "equals",
+          "signature": "hash.equals(a, b)",
+          "returns": "boolean"
+        },
+        {
+          "name": "uuid",
+          "signature": "hash.uuid()",
+          "returns": "string"
+        }
+      ]
+    },
+    "http": {
+      "title": "http",
+      "description": "Outbound HTTP client with timeouts, redirects and SSRF protection.",
+      "note": "Options: headers, body, json, form, timeout (max 30), ssl_verify, follow_redirects, max_redirects, max_size.",
+      "entries": [
+        {
+          "name": "get",
+          "signature": "http.get(url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        },
+        {
+          "name": "head",
+          "signature": "http.head(url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        },
+        {
+          "name": "post",
+          "signature": "http.post(url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        },
+        {
+          "name": "put",
+          "signature": "http.put(url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        },
+        {
+          "name": "patch",
+          "signature": "http.patch(url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        },
+        {
+          "name": "delete",
+          "signature": "http.delete(url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        },
+        {
+          "name": "request",
+          "signature": "http.request(method, url, options?)",
+          "returns": "{ status, body, headers, ok, error }"
+        }
+      ]
+    },
+    "log": {
+      "title": "log",
+      "description": "Structured site logs.",
+      "entries": [
+        {
+          "name": "info",
+          "signature": "log.info(message)",
+          "returns": "boolean"
+        },
+        {
+          "name": "error",
+          "signature": "log.error(message)",
+          "returns": "boolean"
+        },
+        {
+          "name": "warn",
+          "signature": "log.warn(message)",
+          "returns": "boolean"
+        },
+        {
+          "name": "debug",
+          "signature": "log.debug(message)",
+          "returns": "boolean"
+        },
+        {
+          "name": "should_debug",
+          "signature": "log.should_debug()",
+          "returns": "boolean"
+        }
+      ]
+    },
+    "str": {
+      "title": "str",
+      "description": "UTF-8 string helpers.",
+      "entries": [
+        {
+          "name": "split",
+          "signature": "str.split(text, separator)",
+          "returns": "table"
+        },
+        {
+          "name": "trim",
+          "signature": "str.trim(text)",
+          "returns": "string"
+        },
+        {
+          "name": "contains",
+          "signature": "str.contains(text, needle)",
+          "returns": "boolean"
+        },
+        {
+          "name": "starts_with",
+          "signature": "str.starts_with(text, prefix)",
+          "returns": "boolean"
+        },
+        {
+          "name": "ends_with",
+          "signature": "str.ends_with(text, suffix)",
+          "returns": "boolean"
+        },
+        {
+          "name": "limit",
+          "signature": "str.limit(text, length, ending?)",
+          "returns": "string"
+        },
+        {
+          "name": "replace",
+          "signature": "str.replace(text, search, replacement)",
+          "returns": "string"
+        },
+        {
+          "name": "lcfirst",
+          "signature": "str.lcfirst(text)",
+          "returns": "string"
+        },
+        {
+          "name": "ucfirst",
+          "signature": "str.ucfirst(text)",
+          "returns": "string"
+        },
+        {
+          "name": "ucwords",
+          "signature": "str.ucwords(text)",
+          "returns": "string"
+        }
+      ]
+    },
+    "url": {
+      "title": "url",
+      "description": "URL encode/decode, parse/build and slugs.",
+      "entries": [
+        {
+          "name": "encode",
+          "signature": "url.encode(value)",
+          "returns": "string"
+        },
+        {
+          "name": "decode",
+          "signature": "url.decode(value)",
+          "returns": "string"
+        },
+        {
+          "name": "rawencode",
+          "signature": "url.rawencode(value)",
+          "returns": "string"
+        },
+        {
+          "name": "rawdecode",
+          "signature": "url.rawdecode(value)",
+          "returns": "string"
+        },
+        {
+          "name": "parse",
+          "signature": "url.parse(url)",
+          "returns": "table"
+        },
+        {
+          "name": "build",
+          "signature": "url.build(parts)",
+          "returns": "string"
+        },
+        {
+          "name": "slug",
+          "signature": "url.slug(text)",
+          "returns": "string"
+        },
+        {
+          "name": "redirect",
+          "signature": "url.redirect(url)",
+          "returns": "string",
+          "notes": "Sets a 302 redirect and returns an empty string. Prefer ctx:redirect() inside handlers."
+        }
+      ]
+    }
+  }
+}

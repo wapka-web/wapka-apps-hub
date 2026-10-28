@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "apps": [
+    {
+      "key": "folio",
+      "name": "Folio",
+      "repo": "wapka-web/wapka-app-folio",
+      "download": null,
+      "live": null,
+      "status": "stable"
+    },
+    {
+      "key": "prism",
+      "name": "Prism",
+      "repo": "wapka-web/wapka-app-prism",
+      "download": null,
+      "live": "https://prism.wapka.website/",
+      "status": "stable"
+    },
+    {
+      "key": "atlas",
+      "name": "Atlas",
+      "repo": "wapka-web/wapka-app-atlas",
+      "download": null,
+      "live": null,
+      "status": "stable"
+    }
+  ]
+}
